@@ -303,10 +303,10 @@ export default function LifePlanner() {
     return (
       <button 
         onClick={() => setActiveTab(id)}
-        className={`inline-flex items-center gap-2 rounded-full px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+        className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium transition-all ${
           isActive
-            ? 'bg-indigo-500 text-white shadow-sm'
-            : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80'
+            ? 'bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-sm'
+            : 'bg-white text-slate-500 hover:text-slate-900 border border-slate-200'
         }`}
       >
         <Icon size={16} />
@@ -320,29 +320,29 @@ export default function LifePlanner() {
   const RenderToday = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
       <header className="space-y-2">
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-50">
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900">
           Привет, чем займёмся сегодня? 👋
         </h1>
-        <p className="text-sm text-slate-400 italic">"{quote}"</p>
+        <p className="text-sm text-slate-500 italic">"{quote}"</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Morning Ritual */}
-        <div className="bg-slate-900/80 p-6 rounded-3xl border border-slate-800 space-y-4">
-          <div className="flex items-center gap-2 text-indigo-400">
+        <div className="bg-white p-6 rounded-3xl border border-slate-200 space-y-4">
+          <div className="flex items-center gap-2 text-pink-500">
             <Coffee size={20} />
             <h3 className="font-semibold">Утренний ритуал</h3>
           </div>
           <div className="space-y-3">
             <input 
               placeholder="За что я благодарен?" 
-              className="w-full bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400/70"
               value={morningRitual.q1}
               onChange={(e) => setMorningRitual({...morningRitual, q1: e.target.value})}
             />
             <input 
               placeholder="Что сделает этот день отличным?" 
-              className="w-full bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400/70"
               value={morningRitual.q2}
               onChange={(e) => setMorningRitual({...morningRitual, q2: e.target.value})}
             />
@@ -350,16 +350,16 @@ export default function LifePlanner() {
         </div>
 
         {/* Focus of the day */}
-        <div className="bg-slate-900/80 p-6 rounded-3xl border border-slate-800 space-y-4">
-          <div className="flex items-center gap-2 text-amber-400">
+        <div className="bg-white p-6 rounded-3xl border border-slate-200 space-y-4">
+          <div className="flex items-center gap-2 text-orange-400">
             <Zap size={20} />
             <h3 className="font-semibold">Фокус дня</h3>
           </div>
           <div className="space-y-2">
             {tasks.filter(t => t.focus && !t.completed).slice(0, 3).map(task => (
-              <div key={task.id} className="flex items-center gap-3 p-2 bg-slate-900/90 rounded-xl border border-slate-800">
+              <div key={task.id} className="flex items-center gap-3 p-2 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-xs">{task.energy}</span>
-                <span className="text-sm truncate text-slate-100">{task.text}</span>
+                <span className="text-sm truncate text-slate-900">{task.text}</span>
               </div>
             ))}
           </div>
@@ -374,9 +374,9 @@ export default function LifePlanner() {
             value={newTaskText}
             onChange={(e) => setNewTaskText(e.target.value)}
             placeholder="Добавить быструю задачу..."
-            className="w-full bg-slate-900/80 border border-slate-800 rounded-2xl py-4 px-6 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 transition-all placeholder:text-slate-500"
+            className="w-full bg-white border border-slate-200 rounded-2xl py-4 px-6 pr-12 focus:outline-none focus:ring-2 focus:ring-pink-400/70 transition-all placeholder:text-slate-400"
           />
-          <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-400 hover:scale-110 transition-transform">
+          <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-pink-500 hover:scale-110 transition-transform">
             <Plus size={24} />
           </button>
         </form>
@@ -386,13 +386,13 @@ export default function LifePlanner() {
             <div 
               key={task.id} 
               onClick={() => toggleTask(task.id)}
-              className="group flex items-center justify-between bg-slate-900/80 p-4 rounded-2xl border border-slate-800 hover:border-indigo-500/40 transition-all cursor-pointer"
+              className="group flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 hover:border-pink-400/50 transition-all cursor-pointer"
             >
               <div className="flex items-center gap-4">
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${task.completed ? 'bg-indigo-500 border-indigo-500' : 'border-slate-600 group-hover:border-indigo-400'}`}>
+                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${task.completed ? 'bg-pink-500 border-pink-500' : 'border-slate-300 group-hover:border-pink-400'}`}>
                   {task.completed && <CheckCircle2 size={14} className="text-white" />}
                 </div>
-                <span className="text-slate-100">{task.text}</span>
+                <span className="text-slate-900">{task.text}</span>
               </div>
               <span className="text-lg opacity-40 group-hover:opacity-100 transition-opacity">{task.energy}</span>
             </div>
@@ -405,25 +405,25 @@ export default function LifePlanner() {
   const RenderNotes = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-50">
-          <BookOpen className="text-indigo-400" /> Заметки и идеи
+        <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
+          <BookOpen className="text-pink-500" /> Заметки и идеи
         </h2>
         <span className="text-xs text-slate-500">
           Место, где рождаются стратегии, инсайты и разборы.
         </span>
       </div>
 
-      <form onSubmit={addNote} className="space-y-3 bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+      <form onSubmit={addNote} className="space-y-3 bg-white border border-slate-200 rounded-2xl p-4">
         <input
           type="text"
           placeholder="Заголовок заметки"
-          className="w-full bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400/70"
           value={newNote.title}
           onChange={(e) => setNewNote(prev => ({ ...prev, title: e.target.value }))}
         />
         <textarea
           placeholder="Свободные мысли, заметки, конспекты, идеи..."
-          className="w-full bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 text-sm h-24 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm h-24 resize-none focus:outline-none focus:ring-2 focus:ring-pink-400/70"
           value={newNote.content}
           onChange={(e) => setNewNote(prev => ({ ...prev, content: e.target.value }))}
         />
@@ -433,7 +433,7 @@ export default function LifePlanner() {
           </span>
           <button
             type="submit"
-            className="inline-flex items-center gap-2 rounded-full bg-indigo-500 hover:bg-indigo-400 px-4 py-1.5 text-xs font-medium text-white transition-colors"
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-500 hover:to-orange-500 px-4 py-1.5 text-xs font-medium text-white transition-colors"
           >
             <PenLine className="w-3 h-3" />
             Сохранить заметку
@@ -445,16 +445,16 @@ export default function LifePlanner() {
         {notes.map(note => (
           <div
             key={note.id}
-            className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-2"
+            className="bg-white border border-slate-200 rounded-2xl p-4 space-y-2"
           >
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-sm font-semibold text-slate-50 truncate">
+              <h3 className="text-sm font-semibold text-slate-900 truncate">
                 {note.title}
               </h3>
               <span className="text-[11px] text-slate-500">{note.createdAt}</span>
             </div>
             {note.content && (
-              <p className="text-sm text-slate-300 whitespace-pre-line">
+              <p className="text-sm text-slate-700 whitespace-pre-line">
                 {note.content}
               </p>
             )}
@@ -466,44 +466,44 @@ export default function LifePlanner() {
 
   const RenderPlanning = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-50">
-        <Calendar className="text-sky-400" /> Дневной и недельный план
+      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
+        <Calendar className="text-orange-400" /> Дневной и недельный план
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
-          <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-            <Sun className="w-4 h-4 text-amber-300" /> Сегодня
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+            <Sun className="w-4 h-4 text-orange-400" /> Сегодня
           </h3>
           <div className="space-y-2">
             {plans.today.map(item => (
               <div
                 key={item.id}
-                className="flex items-center gap-3 bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2"
+                className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2"
               >
-                <span className="text-xs font-mono text-slate-500 w-14">
+                <span className="text-xs font-mono text-slate-400 w-14">
                   {item.time}
                 </span>
-                <span className="text-sm text-slate-100">{item.label}</span>
+                <span className="text-sm text-slate-900">{item.label}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
-          <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-            <LayoutGrid className="w-4 h-4 text-indigo-400" /> Неделя
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+            <LayoutGrid className="w-4 h-4 text-pink-500" /> Неделя
           </h3>
           <div className="grid grid-cols-3 gap-3 text-xs">
             {plans.week.map(item => (
               <div
                 key={item.id}
-                className="bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 space-y-1"
+                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 space-y-1"
               >
-                <div className="text-[11px] font-mono text-slate-500 uppercase">
+                <div className="text-[11px] font-mono text-slate-400 uppercase">
                   {item.day}
                 </div>
-                <div className="text-[13px] text-slate-100">
+                <div className="text-[13px] text-slate-900">
                   {item.label}
                 </div>
               </div>
@@ -522,12 +522,12 @@ export default function LifePlanner() {
   const RenderCalendar = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-50">
-          <Calendar className="text-emerald-400" /> Календарь
+        <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
+          <Calendar className="text-pink-500" /> Календарь
         </h2>
         <button
           type="button"
-          className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 text-emerald-300 px-4 py-1.5 text-xs font-medium hover:bg-emerald-500/10 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 rounded-full border border-pink-400/60 text-pink-500 px-4 py-1.5 text-xs font-medium hover:bg-pink-50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           onClick={connectGoogleCalendar}
           disabled={isCalendarSyncing}
         >
@@ -536,7 +536,7 @@ export default function LifePlanner() {
         </button>
       </div>
 
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
         <div className="flex items-center justify-between text-xs text-slate-500">
           <span>Сводка ближайших блоков</span>
           <span>События из: локального плана и Google Calendar</span>
@@ -546,13 +546,13 @@ export default function LifePlanner() {
           {calendarEvents.map(event => (
             <div
               key={event.id}
-              className="flex items-center justify-between bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 text-sm"
+              className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm"
             >
               <div className="space-y-1">
-                <div className="text-slate-100">{event.title}</div>
+                <div className="text-slate-900">{event.title}</div>
                 <div className="text-[11px] text-slate-500">{event.source}</div>
               </div>
-              <div className="text-xs font-mono text-slate-400">
+              <div className="text-xs font-mono text-slate-500">
                 {event.time}
               </div>
             </div>
@@ -570,26 +570,26 @@ export default function LifePlanner() {
 
   const RenderGoals = () => (
     <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-50">
-        <Target className="text-indigo-400" /> Горизонты и проекты
+      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
+        <Target className="text-pink-500" /> Горизонты и проекты
       </h2>
       <div className="grid grid-cols-1 gap-8">
         {INITIAL_HORIZONS.map(horizon => (
           <div key={horizon.id} className="space-y-4">
             <div className="flex justify-between items-end">
               <h3 className="text-xl font-semibold" style={{ color: horizon.color }}>{horizon.title}</h3>
-              <span className="text-xs text-slate-500 font-mono uppercase tracking-widest">Horizon level</span>
+              <span className="text-xs text-slate-400 font-mono uppercase tracking-widest">Horizon level</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {INITIAL_PROJECTS.filter(p => p.hId === horizon.id).map(project => (
-                <div key={project.id} className="bg-slate-900/80 p-5 rounded-3xl border border-slate-800 hover:border-indigo-500/40 hover:-translate-y-1 transition-all group">
+                <div key={project.id} className="bg-white p-5 rounded-3xl border border-slate-200 hover:border-pink-400/60 hover:-translate-y-1 transition-all group">
                   <div className="flex justify-between items-start mb-4">
-                    <div className="p-2 bg-slate-800/80 rounded-lg group-hover:bg-indigo-500/10 transition-colors">
-                      <LayoutGrid size={18} className="text-indigo-400" />
+                    <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-pink-50 transition-colors">
+                      <LayoutGrid size={18} className="text-pink-500" />
                     </div>
-                    <span className="text-sm font-medium text-slate-400">{project.progress}%</span>
+                    <span className="text-sm font-medium text-slate-500">{project.progress}%</span>
                   </div>
-                  <h4 className="font-semibold mb-3 text-slate-50">{project.title}</h4>
+                  <h4 className="font-semibold mb-3 text-slate-900">{project.title}</h4>
                   <ProgressBar progress={project.progress} color={horizon.color} />
                 </div>
               ))}
@@ -602,21 +602,21 @@ export default function LifePlanner() {
 
   const RenderHabits = () => (
     <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-50">
-        <Flame className="text-amber-500" /> Трекер привычек
+      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
+        <Flame className="text-orange-400" /> Трекер привычек
       </h2>
       <div className="grid grid-cols-1 gap-4">
         {habits.map(habit => (
-          <div key={habit.id} className="bg-slate-900/80 p-6 rounded-3xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div key={habit.id} className="bg-white p-6 rounded-3xl border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-4 min-w-[200px]">
               <button 
                 onClick={() => toggleHabit(habit.id)}
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${habit.doneToday ? 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.35)]' : 'bg-slate-800/80 hover:bg-slate-700'}`}
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${habit.doneToday ? 'bg-green-500 shadow-[0_8px_24px_rgba(34,197,94,0.35)]' : 'bg-slate-100 hover:bg-slate-200'}`}
               >
                 <CheckCircle2 className={habit.doneToday ? 'text-white' : 'text-slate-500'} />
               </button>
               <div>
-                <h4 className="font-semibold text-slate-50">{habit.title}</h4>
+                <h4 className="font-semibold text-slate-900">{habit.title}</h4>
                 <p className="text-xs text-slate-500 uppercase tracking-tighter">7-day streak</p>
               </div>
             </div>
@@ -625,11 +625,11 @@ export default function LifePlanner() {
               {habit.streak.map((day, i) => (
                 <div 
                   key={i} 
-                  className={`w-8 h-8 rounded-full border-2 transition-all duration-500 ${day === 1 ? 'bg-indigo-500 border-indigo-500' : 'border-slate-700 bg-transparent'}`}
+                  className={`w-8 h-8 rounded-full border-2 transition-all duration-500 ${day === 1 ? 'bg-pink-500 border-pink-500' : 'border-slate-200 bg-white'}`}
                   title={`Day ${i+1}`}
                 />
               ))}
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${habit.doneToday ? 'bg-emerald-500 border-emerald-500 animate-pulse' : 'border-dashed border-slate-600'}`}>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${habit.doneToday ? 'bg-green-500 border-green-500 animate-pulse' : 'border-dashed border-slate-300'}`}>
                 {habit.doneToday && <Star size={12} className="text-white fill-current" />}
               </div>
             </div>
@@ -641,12 +641,12 @@ export default function LifePlanner() {
 
   const RenderOverview = () => (
     <div className="space-y-8 animate-in zoom-in-95 duration-500">
-      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-50">
-        <BarChart3 className="text-sky-400" /> Статистика недели
+      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
+        <BarChart3 className="text-pink-500" /> Статистика недели
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-slate-900/80 p-8 rounded-[40px] border border-slate-800 flex flex-col items-center justify-center text-center space-y-4">
+        <div className="bg-white p-8 rounded-[40px] border border-slate-200 flex flex-col items-center justify-center text-center space-y-4">
           <div className="relative w-32 h-32 flex items-center justify-center">
             <svg className="w-full h-full transform -rotate-90">
               <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-white/5" />
@@ -660,60 +660,62 @@ export default function LifePlanner() {
             </svg>
             <span className="absolute text-2xl font-bold tracking-tighter">{stats.percent}%</span>
           </div>
-          <p className="text-slate-400 text-sm uppercase font-semibold tracking-widest">Готовность дня</p>
+          <p className="text-slate-500 text-sm uppercase font-semibold tracking-widest">Готовность дня</p>
         </div>
 
         <div className="md:col-span-2 grid grid-cols-2 gap-4">
-          <div className="bg-gradient-to-br from-indigo-500/15 to-transparent p-6 rounded-3xl border border-indigo-500/25">
-            <h4 className="text-4xl font-black text-indigo-400">{stats.done}</h4>
-            <p className="text-sm text-slate-400 mt-2">Задач завершено</p>
+          <div className="bg-gradient-to-br from-pink-100 to-orange-50 p-6 rounded-3xl border border-pink-200">
+            <h4 className="text-4xl font-black text-pink-500">{stats.done}</h4>
+            <p className="text-sm text-slate-500 mt-2">Задач завершено</p>
           </div>
-          <div className="bg-slate-900/80 p-6 rounded-3xl border border-slate-800">
-            <h4 className="text-4xl font-black text-slate-50">{stats.total - stats.done}</h4>
-            <p className="text-sm text-slate-400 mt-2">В очереди</p>
+          <div className="bg-white p-6 rounded-3xl border border-slate-200">
+            <h4 className="text-4xl font-black text-slate-900">{stats.total - stats.done}</h4>
+            <p className="text-sm text-slate-500 mt-2">В очереди</p>
           </div>
-          <div className="bg-slate-900/80 p-6 rounded-3xl border border-slate-800">
-            <h4 className="text-4xl font-black text-emerald-400">12</h4>
-            <p className="text-sm text-slate-400 mt-2">Дней страйк</p>
+          <div className="bg-white p-6 rounded-3xl border border-slate-200">
+            <h4 className="text-4xl font-black text-green-500">12</h4>
+            <p className="text-sm text-slate-500 mt-2">Дней страйк</p>
           </div>
-          <div className="bg-slate-900/80 p-6 rounded-3xl border border-slate-800">
-            <h4 className="text-4xl font-black text-amber-400">4.8</h4>
-            <p className="text-sm text-slate-400 mt-2">Средняя энергия</p>
+          <div className="bg-white p-6 rounded-3xl border border-slate-200">
+            <h4 className="text-4xl font-black text-orange-400">4.8</h4>
+            <p className="text-sm text-slate-500 mt-2">Средняя энергия</p>
           </div>
         </div>
       </div>
 
-      <div className="bg-slate-900/80 p-6 rounded-3xl border border-slate-800">
-        <h4 className="font-semibold mb-4 flex items-center gap-2 text-slate-50"><Brain size={18} className="text-purple-400" /> Вечерняя рефлексия</h4>
+      <div className="bg-white p-6 rounded-3xl border border-slate-200">
+        <h4 className="font-semibold mb-4 flex items-center gap-2 text-slate-900"><Brain size={18} className="text-pink-500" /> Вечерняя рефлексия</h4>
         <textarea 
           placeholder="Главное достижение сегодня? Что можно улучшить завтра?" 
-          className="w-full bg-slate-950/60 border border-slate-800 rounded-2xl p-4 text-sm h-32 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 resize-none placeholder:text-slate-500"
+          className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm h-32 focus:outline-none focus:ring-2 focus:ring-pink-400/70 resize-none placeholder:text-slate-400"
         ></textarea>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 font-sans selection:bg-indigo-500/30 pb-8">
+    <div className="min-h-screen bg-[#fafafa] text-slate-900 font-sans selection:bg-pink-300/30 pb-8">
       {/* Content Area */}
-      <main className="max-w-5xl mx-auto px-4 md:px-6 pt-8 md:pt-10 space-y-8">
-        <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <main className="max-w-5xl mx-auto px-4 md:px-6 pt-6 md:pt-8 space-y-8">
+        <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between bg-white/80 backdrop-blur border border-slate-200 rounded-3xl px-4 py-3 md:px-6 md:py-4 shadow-sm">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 rounded-full bg-slate-900/80 border border-slate-800 px-3 py-1 text-xs font-medium text-slate-400">
-              <Trophy className="w-4 h-4 text-indigo-400" />
-              <span>Life Planner</span>
+            <div className="inline-flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 via-orange-400 to-yellow-300 flex items-center justify-center text-white text-sm font-semibold">
+                LP
+              </div>
+              <div className="flex flex-col leading-tight">
+                <span className="text-sm font-semibold tracking-tight">my.life.planner</span>
+                <span className="text-[11px] text-slate-500">Твой личный productivity‑инстаграм</span>
+              </div>
             </div>
-            <p className="text-sm text-slate-400 max-w-xl">
-              Простое и аккуратное место, где твои цели, задачи и привычки собираются в одну понятную картину.
-            </p>
           </div>
-          <div className="flex items-center gap-3 text-xs md:text-sm text-slate-400">
-            <Sun className="w-4 h-4 text-amber-300" />
+          <div className="flex items-center gap-3 text-[11px] md:text-xs text-slate-500">
+            <Sun className="w-4 h-4 text-orange-400" />
             <span>Сегодня — лучший день чуть продвинуться вперёд.</span>
           </div>
         </header>
 
-        <div className="flex flex-wrap gap-2 bg-slate-900/80 border border-slate-800 rounded-full px-2 py-1 w-max">
+        <div className="flex flex-wrap gap-2 bg-white border border-slate-200 rounded-full px-2 py-1 w-max shadow-sm">
           <NavItem id="today" icon={Sun} label="Сегодня" />
           <NavItem id="goals" icon={Target} label="Цели" />
           <NavItem id="notes" icon={BookOpen} label="Заметки" />
@@ -785,23 +787,23 @@ export default function LifePlanner() {
           )}
           {activeTab === 'assistant' && (
             <div className="space-y-6 animate-in fade-in duration-500">
-              <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-50">
-                <MessageCircle className="text-indigo-400" /> ИИ‑ассистент
+              <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
+                <MessageCircle className="text-pink-500" /> ИИ‑ассистент
               </h2>
-              <p className="text-sm text-slate-400 max-w-2xl">
+              <p className="text-sm text-slate-500 max-w-2xl">
                 Опиши свои цели, ограничения по времени и энергию — ассистент поможет разложить это по задачам, дням и
                 подскажет, с чего начать. Сейчас работает в режиме прототипа с заглушкой, но уже готов к интеграции с реальным API.
               </p>
 
-              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col gap-4 h-[420px]">
+              <div className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col gap-4 h-[420px] shadow-sm">
                 <div className="flex-1 overflow-y-auto space-y-3 pr-1">
                   {assistantMessages.map(msg => (
                     <div
                       key={msg.id}
                       className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
                         msg.from === 'ai'
-                          ? 'bg-slate-800 text-slate-100'
-                          : 'bg-indigo-500 text-white ml-auto'
+                          ? 'bg-slate-100 text-slate-900 border border-slate-200'
+                          : 'bg-gradient-to-r from-pink-500 to-orange-400 text-white ml-auto'
                       }`}
                     >
                       {msg.text}
@@ -810,14 +812,14 @@ export default function LifePlanner() {
                 </div>
                 <form onSubmit={handleAssistantSubmit} className="flex items-end gap-2">
                   <textarea
-                    className="flex-1 bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 text-sm resize-none h-16 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm resize-none h-16 focus:outline-none focus:ring-2 focus:ring-pink-400/70"
                     placeholder="Напиши сюда: «У меня 2 часа вечером и цель — продвинуть SaaS. Что лучше сделать?»"
                     value={assistantInput}
                     onChange={(e) => setAssistantInput(e.target.value)}
                   />
                   <button
                     type="submit"
-                    className="inline-flex items-center justify-center rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-2 text-sm font-medium"
+                    className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-500 hover:to-orange-500 text-white px-3 py-2 text-sm font-medium shadow-sm"
                   >
                     <SendIcon />
                   </button>
@@ -828,17 +830,9 @@ export default function LifePlanner() {
         </div>
       </main>
 
-      {/* Global Progress Floating Bar */}
-      <div className="fixed top-0 left-0 right-0 h-1 bg-slate-900/80 z-[60]">
-        <div 
-          className="h-full bg-gradient-to-r from-indigo-500 to-emerald-500 transition-all duration-700"
-          style={{ width: `${stats.percent}%` }}
-        />
-      </div>
-
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #020617; }
+        body { font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background-color: #fafafa; color: #0f172a; }
         .animate-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
