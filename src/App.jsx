@@ -1,11 +1,19 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
-  Sun, Moon, Target, CheckCircle2, Flame, BarChart3, 
-  Plus, LayoutGrid, Zap, ChevronRight, Trophy, 
-  Calendar, Coffee, BookOpen, Brain, Star
+  Sun, Target, CheckCircle2, Flame, BarChart3, 
+  Plus, LayoutGrid, Zap, Trophy, 
+  Calendar, Coffee, BookOpen, Brain, Star, PenLine, MessageCircle
 } from 'lucide-react';
 
+// --- КОНСТАНТЫ И КОНФИГ ---
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
+const GOOGLE_SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
+const GOOGLE_DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'];
+
 // --- ДАННЫЕ ПО УМОЛЧАНИЮ ---
+// Горизонты и проекты
 const INITIAL_HORIZONS = [
   { id: 'h1', title: 'Карьера и Рост', color: '#7c6ff7' },
   { id: 'h2', title: 'Здоровье и Тело', color: '#10b981' },
@@ -31,6 +39,32 @@ const INITIAL_TASKS = [
   { id: 8, pId: 'h1', text: 'Ответить на письма в LinkedIn', energy: '🟢', completed: true, focus: false },
 ];
 
+// Заметки
+const INITIAL_NOTES = [
+  { id: 'n1', title: 'Главные цели на год', content: 'Запуск SaaS, марафон, дизайн-портфолио.', createdAt: 'Сегодня' },
+  { id: 'n2', title: 'Идеи для продукта', content: 'AI-помощник для фрилансеров, трекер энергии.', createdAt: 'Вчера' },
+];
+
+// Планирование (структура для дня/недели)
+const INITIAL_PLANS = {
+  today: [
+    { id: 't1', time: '08:00', label: 'Утренний ритуал', type: 'ritual' },
+    { id: 't2', time: '10:00', label: 'Фокус-блок: продукт', type: 'deep' },
+    { id: 't3', time: '18:30', label: 'Тренировка / бег', type: 'health' },
+  ],
+  week: [
+    { id: 'w1', day: 'Пн', label: 'Работа над SaaS', type: 'deep' },
+    { id: 'w2', day: 'Ср', label: 'Учёба / React Native', type: 'learning' },
+    { id: 'w3', day: 'Сб', label: 'Длинный бег', type: 'health' },
+  ]
+};
+
+// Для календаря (Google Calendar stub)
+const INITIAL_CAL_EVENTS = [
+  { id: 'c1', title: 'Deep work — продукт', time: '10:00–12:00', source: 'Личный календарь' },
+  { id: 'c2', title: 'Тренировка', time: '19:00–20:00', source: 'Google Calendar' },
+];
+
 const INITIAL_HABITS = [
   { id: 1, title: 'Медитация 10 мин', streak: [1, 1, 1, 0, 1, 1, 1], doneToday: true },
   { id: 2, title: 'Кодинг 2 часа', streak: [1, 1, 0, 1, 1, 0, 1], doneToday: false },
@@ -49,8 +83,17 @@ export default function LifePlanner() {
   const [activeTab, setActiveTab] = useState('today');
   const [tasks, setTasks] = useState(INITIAL_TASKS);
   const [habits, setHabits] = useState(INITIAL_HABITS);
+  const [notes, setNotes] = useState(INITIAL_NOTES);
+  const [plans] = useState(INITIAL_PLANS);
+  const [calendarEvents, setCalendarEvents] = useState(INITIAL_CAL_EVENTS);
   const [newTaskText, setNewTaskText] = useState('');
+  const [newNote, setNewNote] = useState({ title: '', content: '' });
+  const [assistantInput, setAssistantInput] = useState('');
+  const [assistantMessages, setAssistantMessages] = useState([
+    { id: 'm1', from: 'ai', text: 'Привет! Я помогу тебе превратить цели в понятный план. Расскажи, над чем хочешь сфокусироваться.' }
+  ]);
   const [morningRitual, setMorningRitual] = useState({ q1: '', q2: '', q3: '' });
+  const [isCalendarSyncing, setIsCalendarSyncing] = useState(false);
 
   const quote = useMemo(() => QUOTES[Math.floor(Math.random() * QUOTES.length)], []);
 
@@ -87,6 +130,161 @@ export default function LifePlanner() {
 
   const toggleHabit = (id) => {
     setHabits(habits.map(h => h.id === id ? { ...h, doneToday: !h.doneToday } : h));
+  };
+
+  const addNote = (e) => {
+    e.preventDefault();
+    if (!newNote.title && !newNote.content) return;
+    const note = {
+      id: Date.now().toString(),
+      title: newNote.title || 'Без названия',
+      content: newNote.content,
+      createdAt: 'Только что',
+    };
+    setNotes([note, ...notes]);
+    setNewNote({ title: '', content: '' });
+  };
+
+  const handleAssistantSubmit = async (e) => {
+    e.preventDefault();
+    if (!assistantInput.trim()) return;
+
+    const text = assistantInput.trim();
+
+    const userMessage = {
+      id: `u-${Date.now()}`,
+      from: 'user',
+      text,
+    };
+    setAssistantMessages((prev) => [...prev, userMessage]);
+    setAssistantInput('');
+
+    const projectId = import.meta.env.VITE_VERTEX_PROJECT_ID;
+    const location = import.meta.env.VITE_VERTEX_LOCATION || 'us-central1';
+    const accessToken = import.meta.env.VITE_VERTEX_ACCESS_TOKEN;
+    const model = import.meta.env.VITE_VERTEX_MODEL || 'gemini-1.5-flash';
+
+    if (!projectId || !accessToken) {
+      const aiMessage = {
+        id: `a-${Date.now()}`,
+        from: 'ai',
+        text: 'Vertex AI ещё не полностью настроен. Добавь VITE_VERTEX_PROJECT_ID и VITE_VERTEX_ACCESS_TOKEN в .env.local.',
+      };
+      setAssistantMessages((prev) => [...prev, aiMessage]);
+      return;
+    }
+
+    try {
+      const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${model}:generateContent`;
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'x-goog-user-project': projectId,
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: 'user',
+              parts: [
+                {
+                  text: `Ты выступаешь как персональный планировщик и коуч по эффективности. Пользователь пишет из своего личного планнера. Помоги разложить его запрос на конкретные шаги, задачи и блоки по времени.\n\nСообщение пользователя:\n${text}`,
+                },
+              ],
+            },
+          ],
+        }),
+      });
+
+      if (!res.ok) {
+        console.error('Vertex AI error', await res.text());
+        throw new Error('Vertex AI request failed');
+      }
+
+      const data = await res.json();
+      const candidate = data.candidates?.[0];
+      const aiText =
+        candidate?.content?.parts?.map((p) => p.text).join('\n') ||
+        'Не удалось разобрать ответ от Vertex AI.';
+
+      const aiMessage = {
+        id: `a-${Date.now()}`,
+        from: 'ai',
+        text: aiText,
+      };
+      setAssistantMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      console.error(error);
+      const aiMessage = {
+        id: `a-${Date.now()}`,
+        from: 'ai',
+        text: 'Я не смог подключиться к Vertex AI. Проверь токен доступа и настройки проекта в .env.local.',
+      };
+      setAssistantMessages((prev) => [...prev, aiMessage]);
+    }
+  };
+
+  const connectGoogleCalendar = () => {
+    if (!window.gapi) {
+      alert('Google API скрипт ещё не загрузился. Обнови страницу и попробуй ещё раз.');
+      return;
+    }
+
+    if (!GOOGLE_CLIENT_ID || !GOOGLE_API_KEY) {
+      alert('Не найдены VITE_GOOGLE_CLIENT_ID и/или VITE_GOOGLE_API_KEY. Добавь их в .env.local.');
+      return;
+    }
+
+    setIsCalendarSyncing(true);
+
+    window.gapi.load('client:auth2', async () => {
+      try {
+        await window.gapi.client.init({
+          apiKey: GOOGLE_API_KEY,
+          clientId: GOOGLE_CLIENT_ID,
+          discoveryDocs: GOOGLE_DISCOVERY_DOCS,
+          scope: GOOGLE_SCOPES,
+        });
+
+        const auth = window.gapi.auth2.getAuthInstance();
+        if (!auth.isSignedIn.get()) {
+          await auth.signIn();
+        }
+
+        const res = await window.gapi.client.calendar.events.list({
+          calendarId: 'primary',
+          maxResults: 10,
+          singleEvents: true,
+          orderBy: 'startTime',
+        });
+
+        const items = res.result.items || [];
+        const mapped = items.map((event) => {
+          const start = event.start?.dateTime || event.start?.date || '';
+          const end = event.end?.dateTime || event.end?.date || '';
+          const timeLabel = start && end ? `${start} → ${end}` : start || 'Без времени';
+
+          return {
+            id: event.id,
+            title: event.summary || 'Без названия',
+            time: timeLabel,
+            source: 'Google Calendar',
+          };
+        });
+
+        setCalendarEvents((prev) => {
+          const withoutGoogle = prev.filter((e) => e.source !== 'Google Calendar');
+          return [...withoutGoogle, ...mapped];
+        });
+      } catch (err) {
+        console.error(err);
+        alert('Не удалось загрузить события из Google Calendar. Проверь настройки в Google Cloud Console.');
+      } finally {
+        setIsCalendarSyncing(false);
+      }
+    });
   };
 
   // --- UI КОМПОНЕНТЫ ---
@@ -203,6 +401,172 @@ export default function LifePlanner() {
       </div>
     </div>
   );
+
+  const RenderNotes = () => (
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-50">
+          <BookOpen className="text-indigo-400" /> Заметки и идеи
+        </h2>
+        <span className="text-xs text-slate-500">
+          Место, где рождаются стратегии, инсайты и разборы.
+        </span>
+      </div>
+
+      <form onSubmit={addNote} className="space-y-3 bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+        <input
+          type="text"
+          placeholder="Заголовок заметки"
+          className="w-full bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+          value={newNote.title}
+          onChange={(e) => setNewNote(prev => ({ ...prev, title: e.target.value }))}
+        />
+        <textarea
+          placeholder="Свободные мысли, заметки, конспекты, идеи..."
+          className="w-full bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 text-sm h-24 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+          value={newNote.content}
+          onChange={(e) => setNewNote(prev => ({ ...prev, content: e.target.value }))}
+        />
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-slate-500">
+            Пиши как есть. Потом вместе с ИИ превратим это в чёткий план.
+          </span>
+          <button
+            type="submit"
+            className="inline-flex items-center gap-2 rounded-full bg-indigo-500 hover:bg-indigo-400 px-4 py-1.5 text-xs font-medium text-white transition-colors"
+          >
+            <PenLine className="w-3 h-3" />
+            Сохранить заметку
+          </button>
+        </div>
+      </form>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {notes.map(note => (
+          <div
+            key={note.id}
+            className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-2"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold text-slate-50 truncate">
+                {note.title}
+              </h3>
+              <span className="text-[11px] text-slate-500">{note.createdAt}</span>
+            </div>
+            {note.content && (
+              <p className="text-sm text-slate-300 whitespace-pre-line">
+                {note.content}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const RenderPlanning = () => (
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-50">
+        <Calendar className="text-sky-400" /> Дневной и недельный план
+      </h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+            <Sun className="w-4 h-4 text-amber-300" /> Сегодня
+          </h3>
+          <div className="space-y-2">
+            {plans.today.map(item => (
+              <div
+                key={item.id}
+                className="flex items-center gap-3 bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2"
+              >
+                <span className="text-xs font-mono text-slate-500 w-14">
+                  {item.time}
+                </span>
+                <span className="text-sm text-slate-100">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+            <LayoutGrid className="w-4 h-4 text-indigo-400" /> Неделя
+          </h3>
+          <div className="grid grid-cols-3 gap-3 text-xs">
+            {plans.week.map(item => (
+              <div
+                key={item.id}
+                className="bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 space-y-1"
+              >
+                <div className="text-[11px] font-mono text-slate-500 uppercase">
+                  {item.day}
+                </div>
+                <div className="text-[13px] text-slate-100">
+                  {item.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <p className="text-xs text-slate-500 max-w-2xl">
+        Здесь удобно раскладывать крупные цели по слотам недели. Дальше можно будет синкать это с Google Calendar и
+        генерировать план вместе с ИИ.
+      </p>
+    </div>
+  );
+
+  const RenderCalendar = () => (
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-50">
+          <Calendar className="text-emerald-400" /> Календарь
+        </h2>
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 text-emerald-300 px-4 py-1.5 text-xs font-medium hover:bg-emerald-500/10 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          onClick={connectGoogleCalendar}
+          disabled={isCalendarSyncing}
+        >
+          <Calendar className="w-3 h-3" />
+          {isCalendarSyncing ? 'Синхронизация…' : 'Подключить Google Calendar'}
+        </button>
+      </div>
+
+      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <div className="flex items-center justify-between text-xs text-slate-500">
+          <span>Сводка ближайших блоков</span>
+          <span>События из: локального плана и Google Calendar</span>
+        </div>
+
+        <div className="space-y-2">
+          {calendarEvents.map(event => (
+            <div
+              key={event.id}
+              className="flex items-center justify-between bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 text-sm"
+            >
+              <div className="space-y-1">
+                <div className="text-slate-100">{event.title}</div>
+                <div className="text-[11px] text-slate-500">{event.source}</div>
+              </div>
+              <div className="text-xs font-mono text-slate-400">
+                {event.time}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <p className="text-[11px] text-slate-500">
+          Для реальной интеграции создай OAuth‑клиент в Google Cloud, подключи JS API и вместо заглушки наполни
+          `calendarEvents` настоящими событиями.
+        </p>
+      </div>
+    </div>
+  );
+
 
   const RenderGoals = () => (
     <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
@@ -352,14 +716,20 @@ export default function LifePlanner() {
         <div className="flex flex-wrap gap-2 bg-slate-900/80 border border-slate-800 rounded-full px-2 py-1 w-max">
           <NavItem id="today" icon={Sun} label="Сегодня" />
           <NavItem id="goals" icon={Target} label="Цели" />
-          <NavItem id="tasks" icon={CheckCircle2} label="Задачи" />
+          <NavItem id="notes" icon={BookOpen} label="Заметки" />
+          <NavItem id="planning" icon={LayoutGrid} label="Планирование" />
+          <NavItem id="calendar" icon={Calendar} label="Календарь" />
           <NavItem id="habits" icon={Flame} label="Привычки" />
           <NavItem id="overview" icon={BarChart3} label="Обзор" />
+          <NavItem id="assistant" icon={MessageCircle} label="ИИ‑ассистент" />
         </div>
 
         <div>
           {activeTab === 'today' && <RenderToday />}
           {activeTab === 'goals' && <RenderGoals />}
+          {activeTab === 'notes' && <RenderNotes />}
+          {activeTab === 'planning' && <RenderPlanning />}
+          {activeTab === 'calendar' && <RenderCalendar />}
           {activeTab === 'habits' && <RenderHabits />}
           {activeTab === 'overview' && <RenderOverview />}
           {activeTab === 'tasks' && (
@@ -413,6 +783,48 @@ export default function LifePlanner() {
               </div>
             </div>
           )}
+          {activeTab === 'assistant' && (
+            <div className="space-y-6 animate-in fade-in duration-500">
+              <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-50">
+                <MessageCircle className="text-indigo-400" /> ИИ‑ассистент
+              </h2>
+              <p className="text-sm text-slate-400 max-w-2xl">
+                Опиши свои цели, ограничения по времени и энергию — ассистент поможет разложить это по задачам, дням и
+                подскажет, с чего начать. Сейчас работает в режиме прототипа с заглушкой, но уже готов к интеграции с реальным API.
+              </p>
+
+              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col gap-4 h-[420px]">
+                <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+                  {assistantMessages.map(msg => (
+                    <div
+                      key={msg.id}
+                      className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
+                        msg.from === 'ai'
+                          ? 'bg-slate-800 text-slate-100'
+                          : 'bg-indigo-500 text-white ml-auto'
+                      }`}
+                    >
+                      {msg.text}
+                    </div>
+                  ))}
+                </div>
+                <form onSubmit={handleAssistantSubmit} className="flex items-end gap-2">
+                  <textarea
+                    className="flex-1 bg-slate-950/60 border border-slate-800 rounded-xl px-3 py-2 text-sm resize-none h-16 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+                    placeholder="Напиши сюда: «У меня 2 часа вечером и цель — продвинуть SaaS. Что лучше сделать?»"
+                    value={assistantInput}
+                    onChange={(e) => setAssistantInput(e.target.value)}
+                  />
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-2 text-sm font-medium"
+                  >
+                    <SendIcon />
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 
@@ -434,5 +846,21 @@ export default function LifePlanner() {
         }
       `}} />
     </div>
+  );
+}
+
+function SendIcon() {
+  return (
+    <svg
+      className="w-4 h-4"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M5 12L4.29289 11.2929C3.90237 11.6834 3.90237 12.3166 4.29289 12.7071L5 12ZM19 12L19.7071 12.7071C20.0976 12.3166 20.0976 11.6834 19.7071 11.2929L19 12ZM11 6L11.7071 5.29289C11.3166 4.90237 10.6834 4.90237 10.2929 5.29289L11 6ZM10.2929 18.7071C10.6834 19.0976 11.3166 19.0976 11.7071 18.7071L11 18L10.2929 18.7071ZM4.29289 12.7071L10.2929 18.7071L11.7071 17.2929L5.70711 11.2929L4.29289 12.7071ZM5.70711 12.7071L11.7071 6.70711L10.2929 5.29289L4.29289 11.2929L5.70711 12.7071ZM5 13H19V11H5V13ZM18.2929 11.2929L15.2929 8.29289L13.8787 9.70711L16.8787 12.7071L18.2929 11.2929ZM16.8787 11.2929L13.8787 14.2929L15.2929 15.7071L18.2929 12.7071L16.8787 11.2929Z"
+        fill="currentColor"
+      />
+    </svg>
   );
 }
