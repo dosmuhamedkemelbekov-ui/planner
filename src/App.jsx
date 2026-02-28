@@ -286,8 +286,8 @@ export default function LifePlanner() {
         onClick={() => setActiveTab(id)}
         className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium transition-all ${
           isActive
-            ? 'bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-sm'
-            : 'bg-white text-slate-500 hover:text-slate-900 border border-slate-200'
+            ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black shadow-[0_0_20px_rgba(250,204,21,0.55)]'
+            : 'bg-transparent text-zinc-400 hover:text-zinc-100 border border-zinc-700 hover:border-yellow-400/70 hover:bg-zinc-900/60'
         }`}
       >
         <Icon size={16} />
@@ -300,30 +300,31 @@ export default function LifePlanner() {
 
   const RenderToday = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <header className="space-y-2">
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900">
-          Привет, чем займёмся сегодня? 👋
+      <header className="space-y-3 text-center md:text-left">
+        <p className="text-xs tracking-[0.25em] text-zinc-500 uppercase">welcome back</p>
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-yellow-300">
+          Твой личный productivity‑hub
         </h1>
-        <p className="text-sm text-slate-500 italic">"{quote}"</p>
+        <p className="text-sm text-zinc-400 italic max-w-xl">"{quote}"</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Morning Ritual */}
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 space-y-4">
-          <div className="flex items-center gap-2 text-pink-500">
+        <div className="bg-[#05070f] p-6 rounded-3xl border border-zinc-800 space-y-4 shadow-[0_18px_40px_rgba(0,0,0,0.75)]">
+          <div className="flex items-center gap-2 text-yellow-300">
             <Coffee size={20} />
             <h3 className="font-semibold">Утренний ритуал</h3>
           </div>
           <div className="space-y-3">
             <input 
               placeholder="За что я благодарен?" 
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400/70"
+              className="w-full bg-[#02030a] border border-zinc-700 rounded-2xl px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-yellow-400/70"
               value={morningRitual.q1}
               onChange={(e) => setMorningRitual({...morningRitual, q1: e.target.value})}
             />
             <input 
               placeholder="Что сделает этот день отличным?" 
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400/70"
+              className="w-full bg-[#02030a] border border-zinc-700 rounded-2xl px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-yellow-400/70"
               value={morningRitual.q2}
               onChange={(e) => setMorningRitual({...morningRitual, q2: e.target.value})}
             />
@@ -331,16 +332,16 @@ export default function LifePlanner() {
         </div>
 
         {/* Focus of the day */}
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 space-y-4">
-          <div className="flex items-center gap-2 text-orange-400">
+        <div className="bg-[#05070f] p-6 rounded-3xl border border-zinc-800 space-y-4 shadow-[0_18px_40px_rgba(0,0,0,0.75)]">
+          <div className="flex items-center gap-2 text-amber-300">
             <Zap size={20} />
             <h3 className="font-semibold">Фокус дня</h3>
           </div>
           <div className="space-y-2">
             {tasks.filter(t => t.focus && !t.completed).slice(0, 3).map(task => (
-              <div key={task.id} className="flex items-center gap-3 p-2 bg-slate-50 rounded-xl border border-slate-200">
+              <div key={task.id} className="flex items-center gap-3 p-2 bg-[#02030a] rounded-2xl border border-zinc-700">
                 <span className="text-xs">{task.energy}</span>
-                <span className="text-sm truncate text-slate-900">{task.text}</span>
+                <span className="text-sm truncate text-zinc-100">{task.text}</span>
               </div>
             ))}
           </div>
@@ -355,10 +356,16 @@ export default function LifePlanner() {
             value={newTaskText}
             onChange={(e) => setNewTaskText(e.target.value)}
             placeholder="Добавить быструю задачу..."
-            className="w-full bg-white border border-slate-200 rounded-2xl py-4 px-6 pr-12 focus:outline-none focus:ring-2 focus:ring-pink-400/70 transition-all placeholder:text-slate-400"
+            className="w-full bg-[#05070f] border border-zinc-800 rounded-2xl py-4 px-6 pr-28 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-yellow-400/70 transition-all placeholder:text-zinc-500"
           />
-          <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-pink-500 hover:scale-110 transition-transform">
-            <Plus size={24} />
+          <button
+            type="submit"
+            className="absolute right-4 top-1/2 -translate-y-1/2 hover:scale-105 transition-transform"
+          >
+            <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 px-4 py-2 text-xs font-semibold tracking-wide text-black shadow-[0_10px_25px_rgba(250,204,21,0.45)]">
+              <Plus size={16} />
+              ДОБАВИТЬ
+            </span>
           </button>
         </form>
 
@@ -367,13 +374,13 @@ export default function LifePlanner() {
             <div 
               key={task.id} 
               onClick={() => toggleTask(task.id)}
-              className="group flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 hover:border-pink-400/50 transition-all cursor-pointer"
+              className="group flex items-center justify-between bg-[#05070f] p-4 rounded-2xl border border-zinc-800 hover:border-yellow-400/70 transition-all cursor-pointer"
             >
               <div className="flex items-center gap-4">
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${task.completed ? 'bg-pink-500 border-pink-500' : 'border-slate-300 group-hover:border-pink-400'}`}>
-                  {task.completed && <CheckCircle2 size={14} className="text-white" />}
+                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${task.completed ? 'bg-yellow-400 border-yellow-400' : 'border-zinc-600 group-hover:border-yellow-300'}`}>
+                  {task.completed && <CheckCircle2 size={14} className="text-black" />}
                 </div>
-                <span className="text-slate-900">{task.text}</span>
+                <span className="text-zinc-100">{task.text}</span>
               </div>
               <span className="text-lg opacity-40 group-hover:opacity-100 transition-opacity">{task.energy}</span>
             </div>
@@ -386,38 +393,38 @@ export default function LifePlanner() {
   const RenderNotes = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
-          <BookOpen className="text-pink-500" /> Заметки и идеи
+        <h2 className="text-2xl font-semibold flex items-center gap-2 text-zinc-50">
+          <BookOpen className="text-yellow-300" /> Заметки и идеи
         </h2>
-        <span className="text-xs text-slate-500">
-          Место, где рождаются стратегии, инсайты и разборы.
+        <span className="text-xs text-zinc-500">
+          Всё, что в голове, — в один HUB.
         </span>
       </div>
 
-      <form onSubmit={addNote} className="space-y-3 bg-white border border-slate-200 rounded-2xl p-4">
+      <form onSubmit={addNote} className="space-y-3 bg-[#05070f] border border-zinc-800 rounded-2xl p-4">
         <input
           type="text"
           placeholder="Заголовок заметки"
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400/70"
+          className="w-full bg-[#02030a] border border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-yellow-400/70 placeholder:text-zinc-500"
           value={newNote.title}
           onChange={(e) => setNewNote(prev => ({ ...prev, title: e.target.value }))}
         />
         <textarea
           placeholder="Свободные мысли, заметки, конспекты, идеи..."
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm h-24 resize-none focus:outline-none focus:ring-2 focus:ring-pink-400/70"
+          className="w-full bg-[#02030a] border border-zinc-700 rounded-xl px-3 py-2 text-sm h-24 resize-none text-zinc-100 focus:outline-none focus:ring-2 focus:ring-yellow-400/70 placeholder:text-zinc-500"
           value={newNote.content}
           onChange={(e) => setNewNote(prev => ({ ...prev, content: e.target.value }))}
         />
         <div className="flex items-center justify-between">
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-zinc-500">
             Пиши как есть. Потом вместе с ИИ превратим это в чёткий план.
           </span>
           <button
             type="submit"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-500 hover:to-orange-500 px-4 py-1.5 text-xs font-medium text-white transition-colors"
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-400 hover:to-amber-400 px-4 py-1.5 text-xs font-semibold text-black tracking-wide shadow-[0_10px_25px_rgba(250,204,21,0.45)]"
           >
             <PenLine className="w-3 h-3" />
-            Сохранить заметку
+            СОХРАНИТЬ
           </button>
         </div>
       </form>
@@ -426,16 +433,16 @@ export default function LifePlanner() {
         {notes.map(note => (
           <div
             key={note.id}
-            className="bg-white border border-slate-200 rounded-2xl p-4 space-y-2"
+            className="bg-[#05070f] border border-zinc-800 rounded-2xl p-4 space-y-2"
           >
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-sm font-semibold text-slate-900 truncate">
+              <h3 className="text-sm font-semibold text-zinc-50 truncate">
                 {note.title}
               </h3>
-              <span className="text-[11px] text-slate-500">{note.createdAt}</span>
+              <span className="text-[11px] text-zinc-500">{note.createdAt}</span>
             </div>
             {note.content && (
-              <p className="text-sm text-slate-700 whitespace-pre-line">
+              <p className="text-sm text-zinc-300 whitespace-pre-line">
                 {note.content}
               </p>
             )}
@@ -447,44 +454,44 @@ export default function LifePlanner() {
 
   const RenderPlanning = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
-        <Calendar className="text-orange-400" /> Дневной и недельный план
+      <h2 className="text-2xl font-semibold flex items-center gap-2 text-zinc-50">
+        <Calendar className="text-yellow-300" /> Дневной и недельный план
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
-          <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-            <Sun className="w-4 h-4 text-orange-400" /> Сегодня
+        <div className="bg-[#05070f] border border-zinc-800 rounded-2xl p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-zinc-50 flex items-center gap-2">
+            <Sun className="w-4 h-4 text-yellow-300" /> Сегодня
           </h3>
           <div className="space-y-2">
             {plans.today.map(item => (
               <div
                 key={item.id}
-                className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2"
+                className="flex items-center gap-3 bg-[#02030a] border border-zinc-700 rounded-xl px-3 py-2"
               >
-                <span className="text-xs font-mono text-slate-400 w-14">
+                <span className="text-xs font-mono text-zinc-500 w-14">
                   {item.time}
                 </span>
-                <span className="text-sm text-slate-900">{item.label}</span>
+                <span className="text-sm text-zinc-100">{item.label}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
-          <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-            <LayoutGrid className="w-4 h-4 text-pink-500" /> Неделя
+        <div className="bg-[#05070f] border border-zinc-800 rounded-2xl p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-zinc-50 flex items-center gap-2">
+            <LayoutGrid className="w-4 h-4 text-yellow-300" /> Неделя
           </h3>
           <div className="grid grid-cols-3 gap-3 text-xs">
             {plans.week.map(item => (
               <div
                 key={item.id}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 space-y-1"
+                className="bg-[#02030a] border border-zinc-700 rounded-xl px-3 py-2 space-y-1"
               >
-                <div className="text-[11px] font-mono text-slate-400 uppercase">
+                <div className="text-[11px] font-mono text-zinc-500 uppercase">
                   {item.day}
                 </div>
-                <div className="text-[13px] text-slate-900">
+                <div className="text-[13px] text-zinc-100">
                   {item.label}
                 </div>
               </div>
@@ -493,7 +500,7 @@ export default function LifePlanner() {
         </div>
       </div>
 
-      <p className="text-xs text-slate-500 max-w-2xl">
+      <p className="text-xs text-zinc-500 max-w-2xl">
         Здесь удобно раскладывать крупные цели по слотам недели. Дальше можно будет синкать это с Google Calendar и
         генерировать план вместе с ИИ.
       </p>
@@ -503,12 +510,12 @@ export default function LifePlanner() {
   const RenderCalendar = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
-          <Calendar className="text-pink-500" /> Календарь
+        <h2 className="text-2xl font-semibold flex items-center gap-2 text-zinc-50">
+          <Calendar className="text-yellow-300" /> Календарь
         </h2>
         <button
           type="button"
-          className="inline-flex items-center gap-2 rounded-full border border-pink-400/60 text-pink-500 px-4 py-1.5 text-xs font-medium hover:bg-pink-50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 rounded-full border border-yellow-400/70 text-yellow-300 px-4 py-1.5 text-xs font-medium hover:bg-yellow-500/10 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           onClick={connectGoogleCalendar}
           disabled={isCalendarSyncing}
         >
@@ -517,8 +524,8 @@ export default function LifePlanner() {
         </button>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
-        <div className="flex items-center justify-between text-xs text-slate-500">
+      <div className="bg-[#05070f] border border-zinc-800 rounded-2xl p-5 space-y-4">
+        <div className="flex items-center justify-between text-xs text-zinc-500">
           <span>Сводка ближайших блоков</span>
           <span>События из: локального плана и Google Calendar</span>
         </div>
@@ -527,20 +534,20 @@ export default function LifePlanner() {
           {calendarEvents.map(event => (
             <div
               key={event.id}
-              className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm"
+              className="flex items-center justify-between bg-[#02030a] border border-zinc-700 rounded-xl px-3 py-2 text-sm"
             >
               <div className="space-y-1">
-                <div className="text-slate-900">{event.title}</div>
-                <div className="text-[11px] text-slate-500">{event.source}</div>
+                <div className="text-zinc-100">{event.title}</div>
+                <div className="text-[11px] text-zinc-500">{event.source}</div>
               </div>
-              <div className="text-xs font-mono text-slate-500">
+              <div className="text-xs font-mono text-zinc-500">
                 {event.time}
               </div>
             </div>
           ))}
         </div>
 
-        <p className="text-[11px] text-slate-500">
+        <p className="text-[11px] text-zinc-500">
           Для реальной интеграции создай OAuth‑клиент в Google Cloud, подключи JS API и вместо заглушки наполни
           `calendarEvents` настоящими событиями.
         </p>
@@ -551,26 +558,26 @@ export default function LifePlanner() {
 
   const RenderGoals = () => (
     <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
-        <Target className="text-pink-500" /> Горизонты и проекты
+      <h2 className="text-2xl font-semibold flex items-center gap-2 text-zinc-50">
+        <Target className="text-yellow-300" /> Горизонты и проекты
       </h2>
       <div className="grid grid-cols-1 gap-8">
         {INITIAL_HORIZONS.map(horizon => (
           <div key={horizon.id} className="space-y-4">
             <div className="flex justify-between items-end">
               <h3 className="text-xl font-semibold" style={{ color: horizon.color }}>{horizon.title}</h3>
-              <span className="text-xs text-slate-400 font-mono uppercase tracking-widest">Horizon level</span>
+              <span className="text-xs text-zinc-500 font-mono uppercase tracking-widest">Horizon level</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {INITIAL_PROJECTS.filter(p => p.hId === horizon.id).map(project => (
-                <div key={project.id} className="bg-white p-5 rounded-3xl border border-slate-200 hover:border-pink-400/60 hover:-translate-y-1 transition-all group">
+                <div key={project.id} className="bg-[#05070f] p-5 rounded-3xl border border-zinc-800 hover:border-yellow-400/70 hover:-translate-y-1 transition-all group">
                   <div className="flex justify-between items-start mb-4">
-                    <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-pink-50 transition-colors">
-                      <LayoutGrid size={18} className="text-pink-500" />
+                    <div className="p-2 bg-[#02030a] rounded-lg group-hover:bg-yellow-500/10 transition-colors">
+                      <LayoutGrid size={18} className="text-yellow-300" />
                     </div>
-                    <span className="text-sm font-medium text-slate-500">{project.progress}%</span>
+                    <span className="text-sm font-medium text-zinc-500">{project.progress}%</span>
                   </div>
-                  <h4 className="font-semibold mb-3 text-slate-900">{project.title}</h4>
+                  <h4 className="font-semibold mb-3 text-zinc-50">{project.title}</h4>
                   <ProgressBar progress={project.progress} color={horizon.color} />
                 </div>
               ))}
@@ -583,22 +590,22 @@ export default function LifePlanner() {
 
   const RenderHabits = () => (
     <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-      <h2 className="text-2xl font-semibold flex items-center gap-2 text-slate-900">
-        <Flame className="text-orange-400" /> Трекер привычек
+      <h2 className="text-2xl font-semibold flex items-center gap-2 text-zinc-50">
+        <Flame className="text-yellow-300" /> Трекер привычек
       </h2>
       <div className="grid grid-cols-1 gap-4">
         {habits.map(habit => (
-          <div key={habit.id} className="bg-white p-6 rounded-3xl border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div key={habit.id} className="bg-[#05070f] p-6 rounded-3xl border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-4 min-w-[200px]">
               <button 
                 onClick={() => toggleHabit(habit.id)}
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${habit.doneToday ? 'bg-green-500 shadow-[0_8px_24px_rgba(34,197,94,0.35)]' : 'bg-slate-100 hover:bg-slate-200'}`}
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${habit.doneToday ? 'bg-green-500 shadow-[0_8px_24px_rgba(34,197,94,0.35)]' : 'bg-[#02030a] hover:bg-zinc-900'}`}
               >
                 <CheckCircle2 className={habit.doneToday ? 'text-white' : 'text-slate-500'} />
               </button>
               <div>
-                <h4 className="font-semibold text-slate-900">{habit.title}</h4>
-                <p className="text-xs text-slate-500 uppercase tracking-tighter">7-day streak</p>
+                <h4 className="font-semibold text-zinc-50">{habit.title}</h4>
+                <p className="text-xs text-zinc-500 uppercase tracking-tighter">7-day streak</p>
               </div>
             </div>
             
@@ -606,11 +613,11 @@ export default function LifePlanner() {
               {habit.streak.map((day, i) => (
                 <div 
                   key={i} 
-                  className={`w-8 h-8 rounded-full border-2 transition-all duration-500 ${day === 1 ? 'bg-pink-500 border-pink-500' : 'border-slate-200 bg-white'}`}
+                  className={`w-8 h-8 rounded-full border-2 transition-all duration-500 ${day === 1 ? 'bg-yellow-300 border-yellow-300' : 'border-zinc-700 bg-[#02030a]'}`}
                   title={`Day ${i+1}`}
                 />
               ))}
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${habit.doneToday ? 'bg-green-500 border-green-500 animate-pulse' : 'border-dashed border-slate-300'}`}>
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${habit.doneToday ? 'bg-green-500 border-green-500 animate-pulse' : 'border-dashed border-zinc-700'}`}>
                 {habit.doneToday && <Star size={12} className="text-white fill-current" />}
               </div>
             </div>
