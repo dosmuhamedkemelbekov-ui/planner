@@ -159,55 +159,36 @@ export default function LifePlanner() {
     setAssistantMessages((prev) => [...prev, userMessage]);
     setAssistantInput('');
 
-    const projectId = import.meta.env.VITE_VERTEX_PROJECT_ID;
-    const location = import.meta.env.VITE_VERTEX_LOCATION || 'us-central1';
-    const accessToken = import.meta.env.VITE_VERTEX_ACCESS_TOKEN;
-    const model = import.meta.env.VITE_VERTEX_MODEL || 'gemini-1.5-flash';
+    const proxyUrl = import.meta.env.VITE_AI_PROXY_URL;
 
-    if (!projectId || !accessToken) {
+    // Для продовой, публичной версии нельзя светить токены напрямую,
+    // поэтому здесь ожидается безопасный бэкенд‑прокси без секретов в фронте.
+    if (!proxyUrl) {
       const aiMessage = {
         id: `a-${Date.now()}`,
         from: 'ai',
-        text: 'Vertex AI ещё не полностью настроен. Добавь VITE_VERTEX_PROJECT_ID и VITE_VERTEX_ACCESS_TOKEN в .env.local.',
+        text: 'Онлайн‑ИИ отключён в публичной версии. Подними небольшой бэкенд‑прокси (например, на Vercel/Render) и укажи его в VITE_AI_PROXY_URL, чтобы безопасно звать Vertex AI.',
       };
       setAssistantMessages((prev) => [...prev, aiMessage]);
       return;
     }
 
     try {
-      const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${model}:generateContent`;
-
-      const res = await fetch(endpoint, {
+      const res = await fetch(proxyUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
-          'x-goog-user-project': projectId,
         },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: 'user',
-              parts: [
-                {
-                  text: `Ты выступаешь как персональный планировщик и коуч по эффективности. Пользователь пишет из своего личного планнера. Помоги разложить его запрос на конкретные шаги, задачи и блоки по времени.\n\nСообщение пользователя:\n${text}`,
-                },
-              ],
-            },
-          ],
-        }),
+        body: JSON.stringify({ message: text }),
       });
 
       if (!res.ok) {
-        console.error('Vertex AI error', await res.text());
-        throw new Error('Vertex AI request failed');
+        console.error('AI proxy error', await res.text());
+        throw new Error('AI proxy request failed');
       }
 
       const data = await res.json();
-      const candidate = data.candidates?.[0];
-      const aiText =
-        candidate?.content?.parts?.map((p) => p.text).join('\n') ||
-        'Не удалось разобрать ответ от Vertex AI.';
+      const aiText = data.answer || 'Не удалось разобрать ответ от AI‑сервиса.';
 
       const aiMessage = {
         id: `a-${Date.now()}`,
@@ -220,7 +201,7 @@ export default function LifePlanner() {
       const aiMessage = {
         id: `a-${Date.now()}`,
         from: 'ai',
-        text: 'Я не смог подключиться к Vertex AI. Проверь токен доступа и настройки проекта в .env.local.',
+        text: 'Я не смог подключиться к AI‑бэкенду. Проверь VITE_AI_PROXY_URL или логи сервера.',
       };
       setAssistantMessages((prev) => [...prev, aiMessage]);
     }
